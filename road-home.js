@@ -70,7 +70,6 @@ callback = function (response) {
 			var descr = route.routeLegs[0].description
 			var timeUnit = route.durationUnit
 			var congestion = route.trafficCongestion
-			var duration = route.travelDuration
 			var trafficDuration = route.travelDurationTraffic
 
 			function formatDuration(d) {
@@ -98,29 +97,29 @@ callback = function (response) {
 				}
 			}
 
-			var traffic = ""
-			if (congestion == "None") {
-				traffic = "without traffic"
-			} else {
-				traffic = "in " + congestion + " traffic"
-			}
-
+			var traffic = "in " + congestion.toLowerCase() + " traffic"
 			var color = "\033[0m"
-			var trafficRatio = trafficDuration / duration
 
-			if (trafficRatio >= 2) {
-				color = "\033[31m"
-			} else if (trafficRatio >= 1.8) {
-				color = "\033[1;91m"
-			} else if (trafficRatio >= 1.6) {
-				color = "\033[1;33m"
-			} else if (trafficRatio >= 1.4) {
-				color = "\033[1;92m"
-			} else {
-				color = "\033[1;32m"
+			switch (congestion) {
+				case "Heavy":
+					color = "\033[1;91m"
+					break
+
+				case "Medium":
+					color = "\033[1;33m"
+					break
+
+				case "Mild":
+					color = "\033[1;92m"
+					break
+
+				case "None":
+					color = "\033[1;32m"
+					traffic = "without traffic"
+					break
 			}
 
-			console.log(descr + "  " + color + formatDuration(trafficDuration) + " " + traffic + "\033[0m (" + formatDuration(duration) + " w/o traffic)")
+			console.log(descr + "  " + color + formatDuration(trafficDuration) + " " + traffic + "\033[0m")
 		}
 	})
 }
